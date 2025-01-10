@@ -36,7 +36,7 @@ dart run pigeon --input <conntract_file_path>
 ```
 
 
-## 3. Android side configration
+## 3. Android side configuration
 On directly opening the android folder in android studio, studio is unable to provide code action and other ide feature. To properly work with it we need to run config build on example folder
 ```bash
 cd example
@@ -85,7 +85,7 @@ In flutter ther is `AndroidView` widget  to bind with native view.
 AndroidView(viewType:'<view-id>')
 ```
 
-![image view](./screenshots/text%20view.png)
+<image src="./screenshots/text view.png" width="300" height="700">
 
 > If you are interested how camera preview is implemented follow this article, else you are done with this.
 
@@ -142,7 +142,47 @@ override fun getView(): View? {
 ```
 First of all we initialize the camera controller with provided context and then it is bind to the lifecycle owner. Finally, `PreviewView` is used to show preview by passing the cameraContoller to controll the preview.
 
-![camera preview](./screenshots/intial%20camera%20preview.png)
+<image src="./screenshots/intial image.png" width="300" height="700">
 
 ## 6. Implementation CameraController
-In the start of the project we created the contract in dart side with two function and generate code usign pigon, kotlin side generated code in `CameraController.kt` file. Let's implemnet those function.  
+In the start of the project we created the contract in dart side with two function and generate code usign pigon, kotlin side generated code in `CameraController.kt` file. Let's implemnet those function. Implement `CameraController` in `CameraPreview` class
+```kotlin
+class CameraPreview(
+    private val context: Context,
+    private val activity: Activity,
+    messenger: BinaryMessenger,
+) : PlatformView, CameraController {
+    // other variable
+    var flashOn = false
+
+    override fun toggleFlash(): Boolean {
+        flashOn = !flashOn
+        cameraController.enableTorch(flashOn)
+        return flashOn
+    }
+
+    override fun toggleCamera(): Boolean {
+        if (cameraController.cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
+            cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+        } else {
+            cameraController.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+        }
+
+        return true
+    }
+
+    init {
+        CameraController.setUp(messenger, this)
+    }
+}
+``` 
+
+In order to handle the state of flash we create `flashOn` variable. Two override will do there respective work. In the `init` function we need to bind the generated `CameraController` setup by passing `BinaryMessanger` and instance of `CameraController` implementing class, in this case `CameraPreview`.
+
+> Note
+>
+> In standard practice check if device have flash light or not.
+
+In flutter side use camera switch function and flash toggle function.
+
+<image src="./screenshots/final image.png" width="300" height="700">

@@ -43,13 +43,15 @@ class _CameraPreviewWidgetState extends State<CameraPreviewWidget> {
         title: const Text('Pigeon Example'),
       ),
       body: AndroidView(viewType: '<view-id>'),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         spacing: 16,
         children: [
           FloatingActionButton(
             onPressed: _toggleFlash,
-            child: const Icon(
-              Icons.flash_on,
+            child: Icon(
+              flashOn ? Icons.flash_off : Icons.flash_on,
             ),
           ),
           FloatingActionButton(

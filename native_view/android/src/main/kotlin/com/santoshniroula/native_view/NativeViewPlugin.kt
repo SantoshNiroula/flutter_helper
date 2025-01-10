@@ -24,6 +24,7 @@ class NativeViewPlugin : FlutterPlugin, ActivityAware {
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         flutterBinding = flutterPluginBinding
+        flutterPluginBinding.binaryMessenger
     }
 
 
@@ -34,7 +35,7 @@ class NativeViewPlugin : FlutterPlugin, ActivityAware {
         activityBinding = binding
         flutterBinding.platformViewRegistry.registerViewFactory(
             "<view-id>",
-            CameraPreviewFactory(activityBinding.activity)
+            CameraPreviewFactory(activityBinding.activity, flutterBinding.binaryMessenger)
         )
     }
 
